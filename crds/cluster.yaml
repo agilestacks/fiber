@@ -1,0 +1,30 @@
+apiVersion: apiextensions.k8s.io/v1
+kind: CustomResourceDefinition
+metadata:
+  name: kushionclusters.agilestacks.com
+spec:
+  group: agilestacks.com
+  scope: Namespaced
+  names:
+    kind: KushionCluster
+    listKind: KushionClusterList
+    plural: kushionclusters
+    singular: kushioncluster
+  versions:
+  - name: v1beta1
+    served: true
+    storage: true
+    schema:
+      openAPIV3Schema:
+        description: A KushionCluster represents a desired (and actual) state of Kubernetes cluster with Korral installed and Prometheus configured to scrape cost metrics
+        type: object
+        properties:
+          kubernetes:
+            type: object
+            properties:
+              api:
+                type: object
+          lifecycle:
+            type: object
+          status:
+            type: object
