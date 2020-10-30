@@ -5,7 +5,7 @@ Fiber is a Kubernetes operator to manage [Korral] cost collector deployments and
 For each [Cluster](crds/cluster.yaml) custom resource installed, Fiber do two things:
 
 1. It connects to the cluster and deploys [Korral] cost collector that is configured to export cost metrics of that cluster.
-2. It changes Promethes Operator [Prometheus custom resource] to add cluster instance to `korral` Prometheus job.
+2. It changes Promethes Operator [Prometheus resource] to add cluster instance to `korral` Prometheus job.
 
 
 ### Korral deployment
@@ -25,10 +25,10 @@ Fiber optionally works with [Bumper] that bridges Prometheus metrics and Cluster
 
 ### Status
 
-Cluster status from the Fiber point of view (Korral `/ping`) and Prometheus point of view (are there cost metrics in the cluster?) is posted back into custom resource under `status: {}`.
+Cluster status from the Fiber point of view (Korral `/ping`) and Prometheus point of view is posted back into custom resource under `status: {}` (are there cost metrics for the cluster? `up{job="korral", instance="<endpoint>"}`).
 
 
 [Prometheus]: https://prometheus.io/
 [Korral]: https://github.com/agilestacks/korral
 [Bumper]: https://github.com/agilestacks/bumper
-[Prometheus custom resource]: https://github.com/prometheus-operator/prometheus-operator/blob/master/Documentation/design.md
+[Prometheus resource]: https://github.com/prometheus-operator/prometheus-operator/blob/master/Documentation/design.md

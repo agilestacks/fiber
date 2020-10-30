@@ -1,4 +1,5 @@
-Fiber is a Kubernetes operator to manage [Korral] cost collector deployments and Prometheus configuration.
+Fiber is a Kubernetes operator to manage Korral cost collector
+deployments and associated Prometheus configuration.
 Copyright 2020 Agile Stacks, Inc.
 Contact us at support@agilestacks.com
 
