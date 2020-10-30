@@ -1,7 +1,9 @@
 apiVersion: kushion.agilestacks.com/v1
 kind: Cluster
 metadata:
-  name: cluster-sample
+  name: Arkadi Dev
 spec:
-  # Add fields here
-  foo: bar
+  domain: arkadi.dev.superhub.io
+  kubernetes:
+    api:
+      endpoint: https://FA9909D116A618A1F104E8AFC8D990AE.gr7.us-east-2.eks.amazonaws.com

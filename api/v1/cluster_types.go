@@ -4,22 +4,36 @@ import (
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 )
 
-// EDIT THIS FILE!  THIS IS SCAFFOLDING FOR YOU TO OWN!
-// NOTE: json tags are required.  Any new fields you add must have json tags for the fields to be serialized.
+// Kubernetes API connection parameters
+type Kubernetes struct {
+	API struct {
+		Endpoint   string `json:"endpoint"`
+		CaCert     string `json:"caCert,omitempty"`
+		Token      string `json:"token,omitempty"`
+		ClientCert string `json:"clientCert,omitempty"`
+		ClientKey  string `json:"clientKey,omitempty"`
+	} `json:"api"`
+}
+
+// Options for Operator fine-tuning
+type Options struct {
+	Korral struct {
+		Install bool `json:"install"`
+	} `json:"korral"`
+}
 
 // ClusterSpec defines the desired state of Cluster
 type ClusterSpec struct {
-	// INSERT ADDITIONAL SPEC FIELDS - desired state of cluster
-	// Important: Run "make" to regenerate code after modifying this file
-
-	// Foo is an example field of Cluster. Edit Cluster_types.go to remove/update
-	Foo string `json:"foo,omitempty"`
+	Domain     string     `json:"domain"`
+	Kubernetes Kubernetes `json:"kubernetes"`
+	Options    Options    `json:"options"`
 }
 
 // ClusterStatus defines the observed state of Cluster
 type ClusterStatus struct {
-	// INSERT ADDITIONAL STATUS FIELD - define observed state of cluster
-	// Important: Run "make" to regenerate code after modifying this file
+	Status     string `json:"status,omitempty"`
+	Korral     string `json:"korral,omitempty"`
+	Prometheus string `json:"prometheus,omitempty"`
 }
 
 // +kubebuilder:object:root=true
