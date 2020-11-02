@@ -4,29 +4,34 @@ import (
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 )
 
+type KubernetesAPI struct {
+	Endpoint   string `json:"endpoint"`
+	CaCert     string `json:"caCert,omitempty"`
+	Token      string `json:"token,omitempty"`
+	ClientCert string `json:"clientCert,omitempty"`
+	ClientKey  string `json:"clientKey,omitempty"`
+}
+
 // Kubernetes API connection parameters
 type Kubernetes struct {
-	API struct {
-		Endpoint   string `json:"endpoint"`
-		CaCert     string `json:"caCert,omitempty"`
-		Token      string `json:"token,omitempty"`
-		ClientCert string `json:"clientCert,omitempty"`
-		ClientKey  string `json:"clientKey,omitempty"`
-	} `json:"api"`
+	API KubernetesAPI `json:"api"`
+	// https://github.com/kubernetes-sigs/controller-tools/issues/442
+}
+
+type KorralOptions struct {
+	Install bool `json:"install"`
 }
 
 // Options for Operator fine-tuning
 type Options struct {
-	Korral struct {
-		Install bool `json:"install"`
-	} `json:"korral"`
+	Korral KorralOptions `json:"korral"`
 }
 
 // ClusterSpec defines the desired state of Cluster
 type ClusterSpec struct {
 	Domain     string     `json:"domain"`
 	Kubernetes Kubernetes `json:"kubernetes"`
-	Options    Options    `json:"options"`
+	Options    *Options   `json:"options,omitempty"`
 }
 
 // ClusterStatus defines the observed state of Cluster
@@ -37,6 +42,7 @@ type ClusterStatus struct {
 }
 
 // +kubebuilder:object:root=true
+// +kubebuilder:subresource:status
 
 // Cluster is the Schema for the clusters API
 type Cluster struct {

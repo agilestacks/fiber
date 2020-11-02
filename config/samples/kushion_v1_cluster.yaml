@@ -1,7 +1,7 @@
 apiVersion: kushion.agilestacks.com/v1
 kind: Cluster
 metadata:
-  name: Arkadi Dev
+  name: arkadi-dev
 spec:
   domain: arkadi.dev.superhub.io
   kubernetes:
