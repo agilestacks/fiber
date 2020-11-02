@@ -1,0 +1,64 @@
+apiVersion: monitoring.coreos.com/v1
+kind: Prometheus
+metadata:
+  labels:
+    app: prometheus-operator-prometheus
+    release: prometheus-operator
+  name: prometheus-operator-prometheus
+  namespace: monitoring
+spec:
+  additionalScrapeConfigs:
+    name: additional-scrape-configs
+    key: prometheus-additional.yaml
+  alerting:
+    alertmanagers:
+    - apiVersion: v2
+      name: prometheus-operator-alertmanager
+      namespace: monitoring
+      pathPrefix: /
+      port: web
+  baseImage: quay.io/prometheus/prometheus
+  enableAdminAPI: false
+  externalUrl: https://prometheus.apps.test.dev.superhub.io/
+  listenLocal: false
+  logFormat: logfmt
+  logLevel: info
+  paused: false
+  podMonitorNamespaceSelector: {}
+  podMonitorSelector:
+    matchLabels:
+      release: prometheus-operator
+  portName: web
+  replicas: 1
+  resources:
+    limits:
+      memory: 4Gi
+    requests:
+      memory: 1Gi
+  retention: 36h
+  routePrefix: /
+  ruleNamespaceSelector: {}
+  ruleSelector:
+    matchLabels:
+      app: prometheus-operator
+      release: prometheus-operator
+  securityContext:
+    fsGroup: 2000
+    runAsNonRoot: true
+    runAsUser: 1000
+  serviceAccountName: prometheus-operator-prometheus
+  serviceMonitorNamespaceSelector: {}
+  serviceMonitorSelector:
+    matchLabels:
+      release: prometheus-operator
+  storage:
+    volumeClaimTemplate:
+      spec:
+        accessModes:
+        - ReadWriteOnce
+        resources:
+          requests:
+            storage: 2Gi
+        storageClassName: default
+        volumeMode: Filesystem
+  version: v2.17.1
