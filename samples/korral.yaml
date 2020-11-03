@@ -1,5 +1,5 @@
 apiVersion: kushion.agilestacks.com/v1
-kind: Cluster
+kind: Korral
 metadata:
   name: arkadi-dev
   namespace: monitoring

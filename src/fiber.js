@@ -74,7 +74,7 @@ class Fiber extends Operator {
         });
 
         const context = {operator: this, api};
-        await this.watchResource('kushion.agilestacks.com', 'v1', 'clusters',
+        await this.watchResource('kushion.agilestacks.com', 'v1', 'korrals',
             async event => watch(event, context).catch((e) => { throw trimAxiosVerbosity(e); }));
     }
 }
