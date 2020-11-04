@@ -1,0 +1,13 @@
+- job_name: korral/domain
+  scrape_interval: 5m
+  scrape_timeout: 20s
+  metrics_path: /api/v1/namespaces/monitoring/services/korral:9797/proxy/metrics
+  scheme: https
+  tls_config:
+    insecure_skip_verify: true
+  bearer_token: ''
+  static_configs:
+  - targets:
+    - host:port
+    labels:
+      domain: 'domain'

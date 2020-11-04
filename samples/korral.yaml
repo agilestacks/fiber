@@ -8,3 +8,4 @@ spec:
   kubernetes:
     api:
       endpoint: https://FA9909D116A618A1F104E8AFC8D990AE.gr7.us-east-2.eks.amazonaws.com
+      token: qwerty
