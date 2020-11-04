@@ -42,8 +42,7 @@ const patchOptions = {headers: {'content-type': 'application/merge-patch+json'}}
 async function configurePrometheus(event, context) {
     const {object} = event;
     const {metadata} = object;
-    const {operator, api} = context;
-    const {k8sApi} = operator;
+    const {operator, coreApi, api} = context;
 
     console.log(`Configuring Prometheus for ${metadata.name}`);
 
@@ -69,7 +68,7 @@ async function configurePrometheus(event, context) {
     const secretKey = secretKeyCR || prometheusSecretKey;
     const patchPrometheus = !secretNameCR;
 
-    const {body: existingSecret, error} = await k8sApi.readNamespacedSecret(secretName, namespace)
+    const {body: existingSecret, error} = await coreApi.readNamespacedSecret(secretName, namespace)
         .catch(e => ({error: e}));
     dump({secretName, secretKey, existingSecret, error: get(error, 'response.body')});
     if (error) {
@@ -114,10 +113,10 @@ async function configurePrometheus(event, context) {
         const data = {data: {[secretKey]: Buffer.from(configs).toString('base64')}};
         dump(data);
         const {body: secret, error: error2} = await (maybePatchSecret ?
-            k8sApi.patchNamespacedSecret(secretName, namespace, data,
+            coreApi.patchNamespacedSecret(secretName, namespace, data,
                 // https://github.com/kubernetes-client/javascript/pull/508/files
                 undefined, undefined, undefined, undefined, patchOptions) :
-            k8sApi.createNamespacedSecret(namespace, {metadata: {name: secretName}, ...data}))
+            coreApi.createNamespacedSecret(namespace, {metadata: {name: secretName}, ...data}))
             .catch(e => ({error: e}));
         dump({secret, error: get(error2, 'response.body')});
     }
@@ -188,6 +187,7 @@ async function watch(event, context) {
 
 class Fiber extends Operator {
     async init() {
+        const {k8sApi} = this;
         const kubeAuth = {};
         await this.applyAxiosKubeConfigAuth(kubeAuth);
         const api = axios.create({
@@ -196,7 +196,7 @@ class Fiber extends Operator {
             ...kubeAuth
         });
 
-        const context = {operator: this, api};
+        const context = {operator: this, coreApi: k8sApi, api};
         await this.watchResource('kushion.agilestacks.com', 'v1', 'korrals',
             async event => watch(event, context).catch((e) => { throw trimAxiosVerbosity(e); }));
     }
