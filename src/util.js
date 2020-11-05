@@ -13,7 +13,7 @@ function sleep(ms) {
     return new Promise(resolve => setTimeout(resolve, ms));
 }
 
-function trimAxiosVerbosity(error) {
+function trimVerbosity(error) {
     if (error.isAxiosError) {
         return pick(error, ['message', 'reason', 'code',
             'config.url', 'config.baseURL', 'config.timeout',
@@ -23,4 +23,4 @@ function trimAxiosVerbosity(error) {
     return error;
 }
 
-module.exports = {noop, dump, sleep, trimAxiosVerbosity};
+module.exports = {noop, dump, sleep, trimVerbosity};
