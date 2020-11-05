@@ -15,7 +15,7 @@ When new Korral resource is detected, Fiber connects to the cluster and installs
 
 ### Prometheus reconfiguration.
 
-When new Korral resource is detected (or removed), Fiber changes Prometheus custom resource to add or modify `korral` job so that cluster Kubernetes API `/api/v1/namespaces/monitoring/services/korral:9797/proxy/metrics` is scraped. As there could be many clusters providing metrics to single Prometheus, each cluster get it's own `domain` metric label that is used by [Bumper] API / UI to filter timeseries.
+When new Korral resource is detected (or removed), Fiber changes Prometheus custom resource to add or modify `korral` job so that cluster Kubernetes API `/api/v1/namespaces/monitoring/services/korral:9897/proxy/metrics` is scraped. As there could be many clusters providing metrics to single Prometheus, each cluster get it's own `domain` metric label that is used by [Bumper] API / UI to filter timeseries.
 
 
 ### HTTP API
