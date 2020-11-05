@@ -2,10 +2,13 @@ const fs = require('fs');
 const yaml = require('js-yaml');
 
 const {kubeconfig} = require('./kubeconfig');
+const {kubeclient} = require('./kubernetes');
 const {kubectl} = require('./kubectl');
+const {retry} = require('./util');
 
 const manifestsFilename = 'korral.yaml';
 const manifestNamespace = 'monitoring';
+const manifestServiceAccount = 'korral';
 
 const {
     KORRAL_NAMESPACE = manifestNamespace
@@ -39,11 +42,25 @@ async function perform(verb, event) {
             + manifestsYaml;
     }
 
-    const kubeconfigYaml = yaml.safeDump(kubeconfig(spec.domain, spec.kubernetes.api));
-    const {error} = await kubectl(kubeconfigYaml, manifestsYaml, verb, '-f', '-');
+    const kconf = kubeconfig(spec.domain, spec.kubernetes.api);
+    const kconfYaml = yaml.safeDump(kconf);
+    const {error} = await kubectl(kconfYaml, manifestsYaml, verb, '-f', '-');
     if (error) {
         console.log(`Unable to ${verb} Korral: kubectl failed: ${error}`);
     }
+
+    if (verb === 'apply') {
+        const api = kubeclient(kconfYaml);
+        const token = await retry(async () => {
+            const {body: serviceAccount} = await api.readNamespacedServiceAccount(manifestServiceAccount, namespace);
+            const secretName = serviceAccount.secrets.find(({name}) => name.includes('token')).name;
+            const {body: secret} = await api.readNamespacedSecret(secretName, namespace);
+            return Buffer.from(secret.data.token, 'base64').toString();
+        });
+        return {token};
+    }
+
+    return {};
 }
 
 async function install(event, context) {

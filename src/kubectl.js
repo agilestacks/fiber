@@ -3,10 +3,11 @@ const crypto = require('crypto');
 const fs = require('fs');
 const os = require('os');
 const path = require('path');
+const yaml = require('js-yaml');
 
 function kubectl(kubeconfig, stdin, ...args) {
     const kubeconfigFilename = path.join(os.tmpdir(), `kubeconfig.${crypto.randomBytes(4).toString('hex')}`);
-    fs.writeFileSync(kubeconfigFilename, kubeconfig);
+    fs.writeFileSync(kubeconfigFilename, typeof kubeconfig === 'string' ? kubeconfig : yaml.safeDump(kubeconfig));
     const kctl = spawn('kubectl',
         [`--kubeconfig=${kubeconfigFilename}`, ...args],
         {stdio: ['pipe', 'inherit', 'inherit']});

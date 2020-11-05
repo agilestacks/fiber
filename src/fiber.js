@@ -6,7 +6,8 @@ const {configure: configurePrometheus, unconfigure: unconfigurePrometheus} = req
 const {dump, trimVerbosity} = require('./util');
 
 async function converge(event, context) {
-    await Promise.all([installKorral, configurePrometheus].map(f => f(event, context)));
+    const {token} = await installKorral(event, context);
+    await configurePrometheus(event, context, token);
 }
 
 async function finalize(event, context) {

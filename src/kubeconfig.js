@@ -3,8 +3,8 @@ function maybeEncode(key) {
     return key;
 }
 
-function kubeconfig(name, config) {
-    const {endpoint, caCert, clientCert, clientKey, token} = config;
+function kubeconfig(name, setup) {
+    const {endpoint, caCert, clientCert, clientKey, token} = setup;
     return {
         apiVersion: 'v1',
         kind: 'Config',

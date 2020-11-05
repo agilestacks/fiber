@@ -31,7 +31,7 @@ const scrapeConfigTemplate = {
 };
 const patchOptions = {headers: {'content-type': 'application/merge-patch+json'}};
 
-async function configure(event, context) {
+async function configure(event, context, token) {
     const {object} = event;
     const {metadata} = object;
     const {operator, coreApi, api} = context;
@@ -72,7 +72,7 @@ async function configure(event, context) {
     }
     const maybePatchSecret = !error && existingSecret;
 
-    const {spec: {domain, kubernetes: {api: {endpoint, token}}}} = object;
+    const {spec: {domain, kubernetes: {api: {endpoint}}}} = object;
     const {host, port} = new URL(endpoint);
 
     const job = cloneDeep(scrapeConfigTemplate);
@@ -94,7 +94,6 @@ async function configure(event, context) {
         else if (existingJob) configs = configs.filter(j => !comparator(j));
     }
 
-    // TODO check if Prometheus is reconfigured if only secret is changed but not the Prometheus CR
     if (!skipSecret) {
         configs = [...configs, job];
         configs = yaml.safeDump(configs);
