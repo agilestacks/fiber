@@ -1,0 +1,37 @@
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: ${component.fiber.name}
+  namespace: ${component.fiber.namespace}
+  labels:
+    app.kubernetes.io/name: fiber
+    app.kubernetes.io/instance: ${component.fiber.name}
+    app.kubernetes.io/component: operator
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: fiber
+      app.kubernetes.io/instance: ${component.fiber.name}
+      app.kubernetes.io/component: operator
+  template:
+    metadata:
+      name: ${component.fiber.name}
+      namespace: ${component.fiber.namespace}
+      labels:
+        app.kubernetes.io/name: fiber
+        app.kubernetes.io/instance: ${component.fiber.name}
+        app.kubernetes.io/component: operator
+    spec:
+      serviceAccountName: ${component.fiber.name}
+      containers:
+      - name: operator
+        image: agilestacks/fiber
+        # imagePullPolicy: Always
+        args: []
+        env:
+        - name: KORRAL_NAMESPACE
+          value: ${component.fiber.namespace}
+        - name: PROMETHEUS_NAME
+          value: ${component.fiber.prometheus.name}

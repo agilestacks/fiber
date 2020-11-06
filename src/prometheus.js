@@ -7,7 +7,7 @@ const {dump} = require('./util');
 const {
     PROMETHEUS_NAMESPACE,
     PROMETHEUS_RESOURCE,
-    PROMETHEUS_NAME = 'prometheus' // Prometheus name in Prometheus Operator resource (also Helm release name)
+    PROMETHEUS_NAME = 'prometheus-operator' // Prometheus name in Prometheus Operator resource (also Helm release name)
 } = process.env;
 
 const prometheusSecretName = 'additional-scrape-configs';
@@ -40,7 +40,7 @@ async function perform(verb, event, context, token) {
 
     const namespace = PROMETHEUS_NAMESPACE || metadata.namespace;
     const prometheusResourceName = PROMETHEUS_RESOURCE ||
-        `prometheus-operator-${PROMETHEUS_NAME}`;
+        `${PROMETHEUS_NAME}-prometheus`;
 
     const prometheuses = operator.getCustomResourceApiUri('monitoring.coreos.com', 'v1', 'prometheuses', namespace);
     const prometheusResourceUri = `${prometheuses}/${prometheusResourceName}`;

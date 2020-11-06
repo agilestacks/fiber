@@ -2,11 +2,19 @@
 apiVersion: kushion.agilestacks.com/v1
 kind: Korral
 metadata:
-  name: arkadi-dev
+  name: test-dev
   namespace: monitoring
 spec:
-  domain: arkadi.dev.superhub.io
+  domain: test.dev.superhub.io
   kubernetes:
     api:
-      endpoint: https://FA9909D116A618A1F104E8AFC8D990AE.gr7.us-east-2.eks.amazonaws.com
-      token: qwerty
+      endpoint: https://...
+      # cluster CA, base64 encoded or ASCII-armored -----BEGIN
+      caCert:
+      # service account token with permissions to install Korral on target cluster
+      # https://github.com/agilestacks/korral/blob/master/install/kubernetes.yaml
+      # currently Fiber cannot use IAM authenticator for EKS
+      token:
+      # alternatively, specify TLS keys for authentication
+      # clientCert:
+      # clientKey:

@@ -1,0 +1,45 @@
+---
+version: 1
+kind: component
+meta:
+  name: fiber
+  title: Fiber
+  brief: Kubernetes operator to manage Korral cost collector deployments and associated Prometheus configuration
+  source:
+    dir: ../fiber
+
+requires:
+- kubernetes
+
+lifecycle:
+  verbs:
+  - deploy
+  - undeploy
+  - kubernetes
+
+parameters:
+- name: dns.domain
+  env: DOMAIN_NAME
+- name: component.prometheus.name
+  value: prometheus-operator
+- name: component.fiber
+  parameters:
+  - name: namespace
+    value: monitoring
+    env: NAMESPACE
+  - name: name
+    value: fiber
+    env: COMPONENT_NAME
+  - name: prometheus.name
+    value: ${component.prometheus.name}
+  - name: image
+    env: IMAGE
+
+templates:
+  files:
+  - templates/*.template
+
+outputs:
+- name: component.fiber.name
+- name: component.fiber.namespace
+- name: component.fiber.prometheus.name

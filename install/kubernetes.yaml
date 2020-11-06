@@ -1,0 +1,94 @@
+---
+kind: ServiceAccount
+apiVersion: v1
+metadata:
+  name: fiber
+  namespace: monitoring
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRole
+metadata:
+  name: fiber
+rules:
+- apiGroups:
+  - ""
+  resources:
+  - secrets
+  verbs:
+  - get
+  - create
+  - patch
+- apiGroups:
+  - kushion.agilestacks.com
+  resources:
+  - korrals
+  verbs:
+  - watch
+  - get
+  - list
+  - patch
+- apiGroups:
+  - monitoring.coreos.com
+  resources:
+  - prometheuses
+  verbs:
+  - get
+  - patch
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRoleBinding
+metadata:
+  name: fiber
+  namespace: monitoring
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: ClusterRole
+  name: fiber
+subjects:
+- kind: ServiceAccount
+  name: fiber
+  namespace: monitoring
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: fiber
+  namespace: monitoring
+  labels:
+    app.kubernetes.io/name: fiber
+    app.kubernetes.io/instance: fiber
+    app.kubernetes.io/component: operator
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: fiber
+      app.kubernetes.io/instance: fiber
+      app.kubernetes.io/component: operator
+  template:
+    metadata:
+      name: fiber
+      namespace: monitoring
+      labels:
+        app.kubernetes.io/name: fiber
+        app.kubernetes.io/instance: fiber
+        app.kubernetes.io/component: operator
+    spec:
+      serviceAccountName: fiber
+      containers:
+      - name: operator
+        image: agilestacks/fiber
+        # imagePullPolicy: Always
+        args: []
+        env:
+        - name: KORRAL_NAMESPACE
+          value: monitoring
+      #   volumeMounts:
+      #   - name: config
+      #     mountPath: /app/korral.yaml
+      #     subPath: korral.yaml
+      #     readOnly: true
+      # volumes:
+      # - name: config
+      #   secret:
+      #     secretName: fiber
