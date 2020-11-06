@@ -39,6 +39,8 @@ Convergence status from the Fiber point of view (Korral `/ping`) and Prometheus 
 
 Operator will search for Prometheus resource in `$PROMETHEUS_NAMESPACE` (if env var is defined) or in a particular Korral resource namespace. The name of Prometheus resource is set via `$PROMETHEUS_RESOURCE` or `$PROMETHEUS_NAME-prometheus`; the default is `prometheus-operator-prometheus` to match Prometheus Operator `prometheus-operator` release installed by Helm.
 
+![Grafana Kubernetes cost dashboard](grafana.png)
+
 
 [Prometheus]: https://prometheus.io/
 [Korral]: https://github.com/agilestacks/korral
