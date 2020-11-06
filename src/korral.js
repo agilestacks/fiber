@@ -63,11 +63,11 @@ async function perform(verb, event) {
     return {};
 }
 
-async function install(event, context) {
+function install(event, context) {
     return perform('apply', event, context);
 }
 
-async function uninstall(event, context) {
+function uninstall(event, context) {
     return perform('delete', event, context);
 }
 

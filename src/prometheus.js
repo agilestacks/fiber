@@ -31,12 +31,12 @@ const scrapeConfigTemplate = {
 };
 const patchOptions = {headers: {'content-type': 'application/merge-patch+json'}};
 
-async function configure(event, context, token) {
+async function perform(verb, event, context, token) {
     const {object} = event;
     const {metadata} = object;
     const {operator, coreApi, api} = context;
 
-    console.log(`Configuring Prometheus for ${metadata.name}`);
+    console.log(`${verb} Prometheus for ${metadata.name}`);
 
     const namespace = PROMETHEUS_NAMESPACE || metadata.namespace;
     const prometheusResourceName = PROMETHEUS_RESOURCE ||
@@ -48,7 +48,7 @@ async function configure(event, context, token) {
     dump({status, prometheusResource});
 
     if (status !== 200) {
-        console.log('Unable to configure Prometheus: '
+        console.log(`Unable to ${verb} Prometheus: `
             + `no Prometheus Operator resource '${namespace}/${prometheusResourceName}' found`);
         return;
     }
@@ -70,38 +70,46 @@ async function configure(event, context, token) {
             return;
         }
     }
-    const maybePatchSecret = !error && existingSecret;
+    const patchSecret = !error && existingSecret;
+    if (verb === 'unconfigure' && !patchSecret) return;
 
     const {spec: {domain, kubernetes: {api: {endpoint}}}} = object;
     const {host, port} = new URL(endpoint);
 
-    const job = cloneDeep(scrapeConfigTemplate);
-    job.job_name = `${job.job_name}/${domain}`;
-    job.static_configs[0].targets.push(`${host}:${port || 443}`);
-    job.static_configs[0].labels.domain = domain;
-    job.bearer_token = token;
-
     let configs = [];
-    let skipSecret = false;
-    if (maybePatchSecret) {
-        const configsBlob = (existingSecret.data || {})[secretKey];
-        if (configsBlob) {
-            configs = yaml.safeLoad(Buffer.from(configsBlob, 'base64').toString());
-        }
-        const comparator = ({job_name: k}) => k === job.job_name;
-        const existingJob = configs.find(comparator);
-        if (isEqual(job, existingJob)) skipSecret = true;
-        else if (existingJob) configs = configs.filter(j => !comparator(j));
+    let setSecret = true;
+    const jobName = `${scrapeConfigTemplate.job_name}/${domain}`;
+    const comparator = ({job_name: k}) => k === jobName;
+    const configsBlob = existingSecret ? (existingSecret.data || {})[secretKey] : null;
+    if (configsBlob) {
+        configs = yaml.safeLoad(Buffer.from(configsBlob, 'base64').toString());
     }
 
-    if (!skipSecret) {
+    if (verb === 'configure') {
+        const job = cloneDeep(scrapeConfigTemplate);
+        job.job_name = jobName;
+        job.static_configs[0].targets.push(`${host}:${port || 443}`);
+        job.static_configs[0].labels.domain = domain;
+        job.bearer_token = token;
+
+        const existingJob = configs.find(comparator);
+        if (isEqual(job, existingJob)) setSecret = false;
+        else if (existingJob) configs = configs.filter(j => !comparator(j));
+
         configs = [...configs, job];
+    } else {
+        const before = configs.length;
+        configs = configs.filter(j => !comparator(j));
+        if (before === configs.length) setSecret = false;
+    }
+
+    if (setSecret) {
         configs = yaml.safeDump(configs);
         console.log(configs);
 
         const data = {data: {[secretKey]: Buffer.from(configs).toString('base64')}};
         dump(data);
-        const {body: secret, error: error2} = await (maybePatchSecret ?
+        const {body: secret, error: error2} = await (patchSecret ?
             coreApi.patchNamespacedSecret(secretName, namespace, data,
                 // https://github.com/kubernetes-client/javascript/pull/508/files
                 undefined, undefined, undefined, undefined, patchOptions) :
@@ -117,8 +125,12 @@ async function configure(event, context, token) {
     }
 }
 
-async function unconfigure() {
+function configure(event, context, token) {
+    return perform('configure', event, context, token);
+}
 
+function unconfigure(event, context) {
+    return perform('unconfigure', event, context);
 }
 
 module.exports = {configure, unconfigure};

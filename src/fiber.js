@@ -12,10 +12,10 @@ async function converge(event, context) {
 
 async function finalize(event, context) {
     const {operator} = context;
-    const uninstalled = await operator.handleResourceFinalizer(event,
-        'uninstall.korrals.kushion.agilestacks.com', ev => uninstallKorral(ev, context));
     const unconfigured = await operator.handleResourceFinalizer(event,
         'unconfigure.korrals.kushion.agilestacks.com', ev => unconfigurePrometheus(ev, context));
+    const uninstalled = await operator.handleResourceFinalizer(event,
+        'uninstall.korrals.kushion.agilestacks.com', ev => uninstallKorral(ev, context));
     return uninstalled || unconfigured;
 }
 
