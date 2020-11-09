@@ -9,10 +9,11 @@ spec:
   kubernetes:
     api:
       endpoint: https://...
-      # cluster CA, base64 encoded or ASCII-armored -----BEGIN
+      # cluster CA, base64 encoded or ascii-armored -----BEGIN
       caCert:
       # service account token with permissions to install Korral on target cluster
       # https://github.com/agilestacks/korral/blob/master/install/kubernetes.yaml
+      # https://github.com/agilestacks/fiber/blob/master/install/korral-installer-serviceaccount.yaml
       # currently Fiber cannot use IAM authenticator for EKS
       token:
       # alternatively, specify TLS keys for authentication

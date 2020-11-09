@@ -30,12 +30,12 @@ Convergence status from the Fiber point of view (Korral `/ping`) and Prometheus 
 
 ### Installation
 
-[crd/korral.yaml] is Korral custom resource definition. [install/kubernetes.yaml] configures service account with restricted privileges and installs the deployment.
+[crd/korral.yaml] is Korral custom resource definition. [install/kubernetes.yaml] configures service account with restricted privileges and installs the Fiber deployment.
 
     kubectl apply -f crd/korral.yaml
     kubectl apply -f install/kubernetes.yaml
 
-[samples/korral.yaml] is Korral resource example.
+[samples/korral.yaml] is Korral resource example. `kubernetes.api.token` is a service account token for Fiber to install Korral [install/korral-installer-serviceaccount.yaml].
 
 Operator will search for Prometheus resource in `$PROMETHEUS_NAMESPACE` (if env var is defined) or in a particular Korral resource namespace. The name of Prometheus resource is set via `$PROMETHEUS_RESOURCE` or `$PROMETHEUS_NAME-prometheus`; the default is `prometheus-operator-prometheus` to match Prometheus Operator `prometheus-operator` release installed by Helm.
 
@@ -48,4 +48,5 @@ Operator will search for Prometheus resource in `$PROMETHEUS_NAMESPACE` (if env 
 [Prometheus resource]: https://github.com/prometheus-operator/prometheus-operator/blob/master/Documentation/design.md
 [crd/korral.yaml]: https://github.com/agilestacks/fiber/blob/master/crd/korral.yaml
 [install/kubernetes.yaml]: https://github.com/agilestacks/fiber/blob/master/install/kubernetes.yaml
+[install/korral-installer-serviceaccount.yaml]: https://github.com/agilestacks/fiber/blob/master/install/korral-installer-serviceaccount.yaml
 [samples/korral.yaml]: https://github.com/agilestacks/fiber/blob/master/samples/korral.yaml
