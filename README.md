@@ -32,6 +32,7 @@ Convergence status from the Fiber point of view (Korral `/ping`) and Prometheus 
 
 [crd/korral.yaml] is Korral custom resource definition. [install/kubernetes.yaml] configures service account with restricted privileges and installs the Fiber deployment.
 
+    kubectl create namespace monitoring
     kubectl apply -f crd/korral.yaml
     kubectl apply -f install/kubernetes.yaml
 
