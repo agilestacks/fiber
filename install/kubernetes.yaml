@@ -83,6 +83,9 @@ spec:
         env:
         - name: KORRAL_NAMESPACE
           value: monitoring
+        # kubectl -n monitoring get prometheus
+        # - name: PROMETHEUS_RESOURCE
+        #   value: prometheus-operator-kube-p-prometheus
       #   volumeMounts:
       #   - name: config
       #     mountPath: /app/korral.yaml

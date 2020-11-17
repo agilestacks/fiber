@@ -38,7 +38,7 @@ Convergence status from the Fiber point of view (Korral `/ping`) and Prometheus 
 
 [samples/korral.yaml] is Korral resource example. `kubernetes.api.token` is a service account token for Fiber to install Korral [install/korral-installer-serviceaccount.yaml].
 
-Operator will search for Prometheus resource in `$PROMETHEUS_NAMESPACE` (if env var is defined) or in a particular Korral resource namespace. The name of Prometheus resource is set via `$PROMETHEUS_RESOURCE` or `$PROMETHEUS_NAME-prometheus`; the default is `prometheus-operator-prometheus` to match Prometheus Operator `prometheus-operator` release installed by Helm.
+Operator will search for Prometheus resource in `$PROMETHEUS_NAMESPACE` (if env var is defined) or in a particular Korral resource namespace. The name of Prometheus resource is set via `$PROMETHEUS_RESOURCE` or `$PROMETHEUS_NAME-prometheus`; the default is `prometheus-operator-prometheus` to match Prometheus Operator `prometheus-operator` release installed by Helm. With [prometheus-community/kube-prometheus-stack](https://github.com/prometheus-community/helm-charts/tree/main/charts/kube-prometheus-stack) chart the name of the resource is `"(<helm release name>-kube-prometheus-stack | trunc 26)-prometheus`.
 
 ![Grafana Kubernetes cost dashboard](grafana.png)
 
