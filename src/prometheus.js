@@ -1,4 +1,4 @@
-const {cloneDeep, get, isEqual, omit} = require('lodash');
+const {cloneDeep, get, isEqual, omit, trimEnd} = require('lodash');
 const yaml = require('js-yaml');
 
 const {KORRAL_NAMESPACE} = require('./korral');
@@ -7,7 +7,8 @@ const {dump} = require('./util');
 const {
     PROMETHEUS_NAMESPACE,
     PROMETHEUS_RESOURCE,
-    PROMETHEUS_NAME = 'prometheus-operator' // Prometheus name in Prometheus Operator resource (also Helm release name)
+    PROMETHEUS_CHART_NAME = 'kube-prometheus-stack',
+    PROMETHEUS_NAME = 'kube-prometheus-stack' // Prometheus name in Operator's resource (also Helm release name)
 } = process.env;
 
 const prometheusSecretName = 'additional-scrape-configs';
@@ -39,8 +40,11 @@ async function perform(verb, event, context, token) {
     console.log(`${verb} Prometheus for ${metadata.name}`);
 
     const namespace = PROMETHEUS_NAMESPACE || metadata.namespace;
+    // https://github.com/prometheus-community/helm-charts/blob/main/charts/kube-prometheus-stack/templates
     const prometheusResourceName = PROMETHEUS_RESOURCE ||
-        `${PROMETHEUS_NAME}-prometheus`;
+        `${PROMETHEUS_NAME.includes(PROMETHEUS_CHART_NAME) ?
+            PROMETHEUS_NAME :
+            trimEnd(`${PROMETHEUS_NAME}-${PROMETHEUS_CHART_NAME}`.substr(0, 26), '-')}-prometheus`;
 
     const prometheuses = operator.getCustomResourceApiUri('monitoring.coreos.com', 'v1', 'prometheuses', namespace);
     const prometheusResourceUri = `${prometheuses}/${prometheusResourceName}`;
